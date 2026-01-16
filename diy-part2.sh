@@ -5,8 +5,8 @@
 # Description: OpenWrt DIY script part 2 (After Update feeds)
 #
 
-# 1. 修改默认 IP 为 10.0.0.1
-sed -i 's/192.168.1.1/10.0.0.1/g' package/base-files/files/bin/config_generate
+# 1. 修改默认 IP 为 192.168.5.1
+sed -i 's/192.168.1.1/192.168.5.1/g' package/base-files/files/bin/config_generate
 
 # 2. 修改 root 默认密码为 "password"
 # 下面的加密字符串对应明文 "password"
