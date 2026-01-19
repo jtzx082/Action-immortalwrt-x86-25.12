@@ -10,7 +10,56 @@
 # See /LICENSE for more information.
 #
 
-# Modify default IP
+# -----------------------------------------------------------------------------
+# 1. 预置网络配置 (Network Configuration)
+# -----------------------------------------------------------------------------
+# 创建自定义配置文件的存放目录（如果不存在）
+mkdir -p package/base-files/files/etc/config
+
+# 将你的 network 文件内容写入目标位置
+# 解释：EOF 块中的内容会被原样写入到固件源码的默认配置路径中
+cat > package/base-files/files/etc/config/network <<EOF
+config interface 'loopback'
+	option device 'lo'
+	option proto 'static'
+	list ipaddr '127.0.0.1/8'
+
+config globals 'globals'
+	option dhcp_default_duid '000492b84759563e4bf19f56ad33825e06d0'
+	option ula_prefix 'fd26:e39d:8428::/48'
+	option packet_steering '1'
+
+config device
+	option name 'br-lan'
+	option type 'bridge'
+	list ports 'eth0'
+	list ports 'eth2'
+	list ports 'eth3'
+
+config interface 'lan'
+	option device 'br-lan'
+	option proto 'static'
+	list ipaddr '10.0.0.1/24'
+	option ip6assign '60'
+
+config interface 'wan'
+	option device 'eth1'
+	option proto 'pppoe'
+	option username '09374560212'
+	option password '39496693'
+	option ipv6 'auto'
+	option norelease '1'
+
+config interface 'wan6'
+	option device 'eth1'
+	option proto 'dhcpv6'
+EOF
+
+# -----------------------------------------------------------------------------
+# 2. 其他原有修改 (Existing Modifications)
+# -----------------------------------------------------------------------------
+
+# Modify default IP (由于上面已经直接覆盖了 network 文件，这条 sed 命令实际上不再需要，可以注释掉)
 #sed -i 's/192.168.1.1/192.168.50.5/g' package/base-files/files/bin/config_generate
 
 # Modify default theme
